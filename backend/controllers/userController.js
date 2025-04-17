@@ -1,14 +1,17 @@
 import ErrorHandler from "../middlewares/error.js";
 import userModel from "../models/userSchema.js";
 import jwt from "jsonwebtoken";
+
+
+
 export const UserRegister = async(req,res,next) => {
     const {name,email,password,phone} = req.body;
-    // const image = req.file;
-    // if (!name || !email || !password || !phone) {
-    //     return next(new ErrorHandler("All Fields Required"))
-    // }
+    console.log("Reg Api")
+    if (!name || !email || !password || !phone) {
+        return next(new ErrorHandler("All Fields Required"))
+    }
     try {
-        const isEmail = userModel.find({email});
+        // const isEmail = userModel.find({email});
         // if (isEmail) {
         //     return next(new ErrorHandler("Email Already Register!!!"))
         // }
@@ -20,7 +23,6 @@ export const UserRegister = async(req,res,next) => {
             password
         })
 
-        // const token = jwt.sign({id:user._id}, )
         await user.save();
         return res.json({sucess:true, user})
     } catch (error) {

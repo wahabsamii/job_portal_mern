@@ -12,8 +12,8 @@ export const postApplication = async (req, res, next) => {
         );
       }
   
-      console.log("Received Files:", req.file);
-      console.log("Received Body:", req.body);
+      // console.log("Received Files:", req.file);
+      // console.log("Received Body:", req.body);
   
       if (!req.file) {
         return next(new ErrorHandler("Resume File Required!", 400));
@@ -164,11 +164,10 @@ export const jobseekerDeleteApplication =
   }
 
 export const getSeekerAppliedJobs = async(req,res,next) => {
-  const {id} = req.params;
-  // console.log(id)
+  const {id} = req.body;
+  // console.log("API TOUCHING ", email)
   try {
-    const specific = await Job.find({ "applicantID.user": id });
-
+    const specific = await Application.find({ "applicantID.user": id });
   if (!specific.length) {
     return res.status(404).json({ message: "No jobs found for this user." });
   }

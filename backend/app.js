@@ -17,6 +17,4 @@ app.use("/api/job", jobRoutes);
 app.use("/api/application", applicationRoutes);
 
 
-app.listen(4000, function() {
-    console.log("SERVER IS LISTING ON PORT 4000")
-})
+export default app;

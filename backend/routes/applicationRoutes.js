@@ -19,7 +19,7 @@ router.get("/jobseeker/getall", jobseekerGetAllApplications);
 
 // get all application
 router.get("/all/application", GetAllApplication);
-router.get("/my/application/:id", getSeekerAppliedJobs);
+router.post("/userapp", getSeekerAppliedJobs);
 router.delete("/delete/:id", jobseekerDeleteApplication);
 
 export default router;
