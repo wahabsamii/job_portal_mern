@@ -165,7 +165,7 @@ export const jobseekerDeleteApplication =
 
 export const getSeekerAppliedJobs = async(req,res,next) => {
   const {id} = req.body;
-  // console.log("API TOUCHING ", email)
+  // console.log("API TOUCHING ", id)
   try {
     const specific = await Application.find({ "applicantID.user": id });
   if (!specific.length) {

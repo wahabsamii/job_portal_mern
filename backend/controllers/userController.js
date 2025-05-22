@@ -55,18 +55,18 @@ export const login = async (req, res, next) => {
     return res.json({success:true, user})
   };
   
-  // export const logout = async (req, res, next) => {
-  //   res
-  //     .status(201)
-  //     .cookie("token", "", {
-  //       httpOnly: true,
-  //       expires: new Date(Date.now()),
-  //     })
-  //     .json({
-  //       success: true,
-  //       message: "Logged Out Successfully !",
-  //     });
-  // };
+  export const logout = async (req, res, next) => {
+    res
+      .status(201)
+      .cookie("token", "", {
+        httpOnly: true,
+        expires: new Date(Date.now()),
+      })
+      .json({
+        success: true,
+        message: "Logged Out Successfully !",
+      });
+  };
   
   
   // export const getUser = catchAsyncErrors((req, res, next) => {
