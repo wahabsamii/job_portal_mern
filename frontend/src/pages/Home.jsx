@@ -1,0 +1,28 @@
+import React from 'react'
+import HeroSection from '../components/HeroSection'
+import JobSection from '../components/JobSection'
+import Cetagories from '../components/Cetagories'
+import ExploreJobs from '../components/ExploreJobs'
+import JobnovaSection from '../components/JobnovaSection'
+import BestCompanies from '../components/BestCompanies'
+import BlogSection from '../components/BlogSection'
+import ThemeSwitcher from '../components/ThemeSwither'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
+
+export default function Home() {
+  return (
+    <>
+    <Header/>
+    <HeroSection />
+    <JobSection />
+    <Cetagories />
+    <ExploreJobs />
+    <JobnovaSection />
+    <BestCompanies />
+    <BlogSection />
+    {/* <ThemeSwitcher/> */}
+    <Footer />
+    </>
+  )
+}
