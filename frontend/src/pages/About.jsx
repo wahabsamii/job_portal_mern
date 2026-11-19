@@ -11,6 +11,7 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function About() {
   const theme = useSelector((state) => state.theme.theme);
@@ -272,6 +273,8 @@ export default function About() {
           </section>
         </div>
       </main>
+
+      <Footer />
     </>
   );
 }

@@ -19,6 +19,7 @@ const port = process.env.PORT || 4000;
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://jobnova-seven.vercel.app', 
+  'https://jobnova-app.vercel.app'
 ];
 
 const corsOptions = {
@@ -35,10 +36,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 connectCloudinary();
 await mongoose.connect(process.env.MONGO_URI).then(() => console.log('Database connected success'));
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
