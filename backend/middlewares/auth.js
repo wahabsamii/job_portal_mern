@@ -3,6 +3,8 @@ import ErrorHandler from "./error.js";
 import jwt from "jsonwebtoken";
 
 export const isAuthenticated = async (req, res, next) => {
+  console.log("COOKIES:", req.cookies);
+
   const { token } = req.cookies;
   if (!token) {
     return next(new ErrorHandler("User Not Authorized", 401));
@@ -16,8 +18,8 @@ export const isAuthenticated = async (req, res, next) => {
 
 export const isAdmin = async (req,res,next) => {
     try {
-      const {role} = req.user;
-      if(role !== "Emplooye"){
+      const { role } = req.user;
+      if(role !== "Employee"){
         return res.status(404).json({message:"Access Denied! Only Our Emplooye Allow."})
       }
       next()

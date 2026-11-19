@@ -1,35 +1,51 @@
 import ErrorHandler from "../middlewares/error.js";
 import userModel from "../models/userSchema.js";
 import jwt from "jsonwebtoken";
+import bcrypts from 'bcryptjs';
+import {v2 as cloudinary} from 'cloudinary';
 
+export const UserRegister = async (req, res, next) => {
+  const { name, email, password, phone } = req.body;
 
+  if (!name || !email || !password || !phone) {
+    return res.json({
+      success: false,
+      message: "All Fields Required",
+    });
+  }
 
-export const UserRegister = async(req,res,next) => {
-    const {name,email,password,phone} = req.body;
-    console.log("Reg Api")
-    if (!name || !email || !password || !phone) {
-        return next(new ErrorHandler("All Fields Required"))
-    }
-    try {
-        // const isEmail = userModel.find({email});
-        // if (isEmail) {
-        //     return next(new ErrorHandler("Email Already Register!!!"))
-        // }
+  try {
+    const isEmail = await userModel.findOne({ email });
 
-        const user = await userModel.create({
-            name,
-            email,
-            phone,
-            password
-        })
-
-        await user.save();
-        return res.json({sucess:true, user})
-    } catch (error) {
-        console.log(error.message)
+    if (isEmail) {
+      return res.json({
+        success: false,
+        message: "Email Already Registered!",
+      });
     }
 
-}
+    const hashedPassword = await bcrypts.hash(password, 10);
+
+    const user = await userModel.create({
+      name,
+      email,
+      phone,
+      password:hashedPassword,
+    });
+
+    return res.json({
+      success: true,
+      user,
+      message: "Account Created!",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 
 export const login = async (req, res, next) => {
     const { email, password } = req.body;
@@ -40,18 +56,23 @@ export const login = async (req, res, next) => {
     if (!user) {
       return next(new ErrorHandler("Invalid Email Or Password.", 400));
     }
-    // const isPasswordMatched = await user.comparePassword(password);
-    // if (!isPasswordMatched) {
-    //   return next(new ErrorHandler("Invalid Email Or Password !", 400));
-    // }
-    // if (user.role !== role) {
-    //   return next(
-    //     new ErrorHandler(`User with provided email and ${role} not found !`, 404)
-    //   );
-    // }
-    // sendToken(user, 201, res, "User Logged In Sucessfully !");
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET_KEY);
-    res.cookie("token", token);
+    const isPasswordMatched = await bcrypts.compare(password, user.password);
+    if (!isPasswordMatched) {
+      return next(new ErrorHandler("Invalid Email Or Password !", 400));
+    }
+
+    const token = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "7d" }
+      );
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false, // localhost
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
     return res.json({success:true, user})
   };
   
@@ -68,11 +89,59 @@ export const login = async (req, res, next) => {
       });
   };
   
-  
-  // export const getUser = catchAsyncErrors((req, res, next) => {
-  //   const user = req.user;
-  //   res.status(200).json({
-  //     success: true,
-  //     user,
-  //   });
-  // });
+
+export const updateProfile = async (req, res) => {
+  const { name, email, password, phone } = req.body;
+  const image = req.file;
+  try {
+    const user = req.user;
+
+    let imageUrl = user.image;
+
+    // Upload new image if provided
+    if (image) {
+      console.log("Image received:", image);
+
+      const uploadImage = await cloudinary.uploader.upload(image.path, {
+        resource_type: "image",
+      });
+
+      imageUrl = uploadImage.secure_url;
+
+      console.log("Cloudinary image URL:", imageUrl);
+    }
+
+    const updateData = {
+      name,
+      email,
+      phone,
+      image: imageUrl,
+    };
+
+    if (password) {
+      updateData.password = await bcrypts.hash(password, 10);
+    }
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      user._id,
+      { $set: updateData },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile Updated Successfully!",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

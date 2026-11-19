@@ -3,12 +3,18 @@ import { Job } from "../models/jobSchema.js";
 import ErrorHandler from "../middlewares/error.js";
 import {v2 as cloudinary} from 'cloudinary';
 import path from 'path'
+
+
 export const getAllJobs =async (req, res, next) => {
-  const jobs = await Job.find({ expired: false });
-  res.status(200).json({
-    success: true,
-    jobs,
-  });
+ try {
+   const jobs = await Job.find({ expired: false });
+   res.status(200).json({
+      success: true,
+      jobs,
+    });
+ } catch (error) {
+   return res.json({success: false, message: error.message});
+ }
 };
 
 export const postJob = async (req, res, next) => {

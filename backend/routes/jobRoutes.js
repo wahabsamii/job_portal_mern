@@ -6,7 +6,7 @@ import { isAdmin, isAuthenticated } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.get("/getall", getAllJobs);
-router.post("/post",upload.single("image"),isAdmin, postJob);
+router.post("/post", upload.single("image"),isAuthenticated, isAdmin, postJob);
 router.get("/getmyjobs", getMyJobs);
 router.put("/update/:id", updateJob);
 router.delete("/delete/:id", deleteJob);
