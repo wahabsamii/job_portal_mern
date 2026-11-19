@@ -113,11 +113,6 @@ npm run dev
 
 ## 🌐 Deployment
 
-The backend API is deployed on Vercel.
-
-**Backend URL:**  
-https://jobnova-backend.vercel.app/
-
 For deployment, configure the required environment variables in your Vercel project settings.
 
 Never upload your `.env` file or expose database credentials and JWT secrets.
